@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE DAY | Life is legacy.</title>
+  <meta name="description" content="THE DAY - Life Documentary Cinema. 人生ドキュメンタリー映画制作サービス。人生を映画として後世に残す。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Noto+Sans+JP:wght@300;400;500&family=Noto+Serif+JP:wght@300;400;500;600&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-gold: #d4b896;
+      --color-gold-light: #e8d4b8;
+      --color-gold-dark: #a89060;
+      --color-bg: #0a0a0a;
+      --color-bg-light: #121212;
+      --color-bg-card: #161616;
+      --color-text: #ffffff;
+      --color-text-muted: #c8c8c8;
+      --color-text-dim: #a0a0a0;
+      --color-border: #3a3a3a;
+      --color-border-light: #2a2a2a;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Syne', 'Noto Sans JP', sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--color-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--color-border); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-gold); }
+
+    /* Grain Overlay */
+    .grain {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 24px 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.7s ease;
+    }
+
+    .nav.scrolled {
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      letter-spacing: 0.2em;
+      color: var(--color-gold);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-link {
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      color: #c0c0c0;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .nav-link:hover { color: #ffffff; }
+
+    .nav-link-btn {
+      border: 1px solid var(--color-border);
+      padding: 10px 24px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link-btn:hover {
+      border-color: var(--color-gold);
+      color: var(--color-gold);
+      background: rgba(212, 184, 150, 0.1);
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 12%;
+      background: var(--color-bg);
+      z-index: 10;
+    }
+
+    .hero::before { top: 0; }
+    .hero::after { bottom: 0; }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+    }
+
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.4);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, var(--color-bg) 0%, transparent 50%),
+                  linear-gradient(to right, rgba(10,10,10,0.5) 0%, transparent 30%, transparent 70%, rgba(10,10,10,0.5) 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 32px;
+    }
+
+    .hero-label {
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      color: var(--color-gold);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: heroReveal 1.8s var(--ease-out-expo) 0.5s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: clamp(36px, 8vw, 96px);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      opacity: 0;
+      animation: heroReveal 1.8s var(--ease-out-expo) 0.8s forwards;
+    }
+
+    .hero-line {
+      width: 64px;
+      height: 1px;
+      background: var(--color-gold);
+      margin: 48px 0 32px;
+      transform: scaleX(0);
+      animation: lineExpand 1.5s var(--ease-out-expo) 1.2s forwards;
+    }
+
+    .hero-subtitle {
+      font-size: 15px;
+      color: #d8d8d8;
+      max-width: 500px;
+      line-height: 2;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      animation: heroReveal 1.8s var(--ease-out-expo) 1s forwards;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 20;
+      opacity: 0;
+      animation: fadeInUp 1s var(--ease-out-expo) 1.5s forwards;
+    }
+
+    .hero-scroll span {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: #b0b0b0;
+      margin-bottom: 16px;
+    }
+
+    .hero-scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--color-gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* Animations */
+    @keyframes heroReveal {
+      0% { opacity: 0; transform: translateY(80px); filter: blur(10px); }
+      100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
+    @keyframes lineExpand {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(40px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes checkDraw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* Sections */
+    .section {
+      padding: 128px 64px;
+    }
+
+    .section-dark { background: var(--color-bg); }
+    .section-light { background: var(--color-bg-light); }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--color-gold);
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 300;
+      line-height: 1.3;
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; }
+    .container-wide { max-width: 1800px; margin: 0 auto; }
+
+    /* The Gift Section */
+    .gift-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 96px;
+      align-items: center;
+    }
+
+    .gift-text p {
+      font-size: 16px;
+      color: #d0d0d0;
+      line-height: 2;
+      margin-bottom: 24px;
+    }
+
+    .gift-image {
+      position: relative;
+    }
+
+    .gift-image img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      filter: grayscale(100%);
+      transition: filter 0.7s ease;
+    }
+
+    .gift-image:hover img { filter: grayscale(0%); }
+
+    .gift-image-frame {
+      position: absolute;
+      bottom: -32px;
+      left: -32px;
+      width: 128px;
+      height: 128px;
+      border: 1px solid rgba(212, 184, 150, 0.3);
+    }
+
+    /* Works Section */
+    .works-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 80px;
+    }
+
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .work-card {
+      position: relative;
+      aspect-ratio: 2.35/1;
+      overflow: hidden;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .work-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s var(--ease-out-expo);
+    }
+
+    .work-card:hover img { transform: scale(1.05); }
+
+    .work-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 1;
+    }
+
+    .work-card:hover::before { opacity: 1; }
+
+    .work-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 40px;
+      z-index: 2;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 0.5s var(--ease-out-expo);
+    }
+
+    .work-card:hover .work-info {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .work-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .work-year {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--color-gold);
+    }
+
+    .work-meta-line {
+      width: 32px;
+      height: 1px;
+      background: #5a5a5a;
+    }
+
+    .work-category {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: #d0d0d0;
+    }
+
+    .work-title {
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: 28px;
+      font-weight: 300;
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+
+    .work-subtitle {
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      color: #c0c0c0;
+      font-style: italic;
+    }
+
+    .work-desc {
+      font-size: 14px;
+      color: #a8a8a8;
+      margin-top: 16px;
+    }
+
+    .work-play {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0.75);
+      width: 64px; height: 64px;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.5s ease;
+      z-index: 3;
+      backdrop-filter: blur(4px);
+      background: rgba(0,0,0,0.3);
+    }
+
+    .work-card:hover .work-play {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .work-play svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+      margin-left: 4px;
+    }
+
+    .works-more {
+      text-align: center;
+      margin-top: 64px;
+    }
+
+    .works-more a {
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: #b0b0b0;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: 1px solid var(--color-border);
+      transition: all 0.3s ease;
+    }
+
+    .works-more a:hover {
+      color: var(--color-gold);
+      border-color: var(--color-gold);
+      background: rgba(212, 184, 150, 0.05);
+    }
+
+    /* ============================================
+       03 - QUALITY SECTION (大幅改善)
+       ============================================ */
+    .quality-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .quality-header p {
+      font-size: 16px;
+      color: #d0d0d0;
+      max-width: 600px;
+      margin: 32px auto 0;
+      line-height: 2;
+    }
+
+    /* Quality Grid with Cards */
+    .quality-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    .quality-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border-light);
+      border-radius: 8px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .quality-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--color-gold-dark), var(--color-gold), var(--color-gold-dark));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .quality-card:hover {
+      border-color: var(--color-border);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .quality-card:hover::before {
+      opacity: 1;
+    }
+
+    .quality-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--color-border);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .quality-card:hover .quality-icon {
+      border-color: var(--color-gold);
+      background: rgba(212, 184, 150, 0.1);
+    }
+
+    .quality-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--color-gold);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .quality-card-label {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--color-gold);
+      margin-bottom: 12px;
+    }
+
+    .quality-card-title {
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: 22px;
+      font-weight: 400;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .quality-card-desc {
+      font-size: 13px;
+      color: #a8a8a8;
+      line-height: 1.7;
+    }
+
+    /* Price & Service Box */
+    .price-service-box {
+      margin-top: 80px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .price-service-inner {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+    }
+
+    .price-main {
+      padding: 48px;
+      border-right: 1px solid var(--color-border-light);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(212,184,150,0.05) 0%, transparent 100%);
+    }
+
+    .price-label {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: #a8a8a8;
+      margin-bottom: 16px;
+    }
+
+    .price-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 56px;
+      color: var(--color-gold);
+      line-height: 1;
+    }
+
+    .price-note {
+      font-size: 13px;
+      color: #909090;
+      margin-top: 12px;
+    }
+
+    .service-list {
+      padding: 48px;
+    }
+
+    .service-list-title {
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--color-gold);
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    .service-items {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 32px;
+    }
+
+    .service-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .service-check {
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--color-gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .service-check svg {
+      width: 10px;
+      height: 10px;
+      stroke: var(--color-gold);
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    .service-text {
+      font-size: 14px;
+      color: #d0d0d0;
+      line-height: 1.6;
+    }
+
+    /* ============================================
+       04 - FLOW SECTION (ビジュアル追加)
+       ============================================ */
+    .flow-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      margin-bottom: 80px;
+      align-items: center;
+    }
+
+    .flow-intro-text p {
+      font-size: 16px;
+      color: #c8c8c8;
+      line-height: 2;
+      margin-top: 24px;
+    }
+
+    .flow-intro-image {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .flow-intro-image img {
+      width: 100%;
+      aspect-ratio: 16/10;
+      object-fit: cover;
+    }
+
+    .flow-intro-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(212, 184, 150, 0.2);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    /* Flow Cards */
+    .flow-cards {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+    }
+
+    .flow-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border-light);
+      border-radius: 12px;
+      padding: 32px 24px;
+      text-align: center;
+      position: relative;
+      transition: all 0.4s ease;
+    }
+
+    .flow-card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 3px;
+      background: var(--color-gold);
+      border-radius: 0 0 4px 4px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .flow-card:hover {
+      border-color: var(--color-border);
+      transform: translateY(-8px);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.3);
+    }
+
+    .flow-card:hover::before {
+      opacity: 1;
+    }
+
+    .flow-card-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 20px;
+      background: rgba(212, 184, 150, 0.1);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .flow-card:hover .flow-card-icon {
+      border-color: var(--color-gold);
+      background: rgba(212, 184, 150, 0.15);
+    }
+
+    .flow-card-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--color-gold);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .flow-card-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      color: var(--color-gold);
+      margin-bottom: 8px;
+      letter-spacing: 0.1em;
+    }
+
+    .flow-card-title {
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: 20px;
+      font-weight: 400;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .flow-card-desc {
+      font-size: 13px;
+      color: #a0a0a0;
+      line-height: 1.7;
+    }
+
+    /* Flow connector arrows */
+    .flow-cards-wrapper {
+      position: relative;
+    }
+
+    /* ============================================
+       CONTACT SECTION
+       ============================================ */
+    .contact-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .contact-header p {
+      font-size: 16px;
+      color: #c0c0c0;
+      margin-top: 32px;
+      line-height: 2;
+    }
+
+    .contact-form {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border-light);
+      border-radius: 16px;
+      padding: 48px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .form-row-full {
+      margin-bottom: 28px;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: #b0b0b0;
+      margin-bottom: 12px;
+    }
+
+    .form-label .required {
+      color: var(--color-gold);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 16px 20px;
+      font-family: 'Syne', 'Noto Sans JP', sans-serif;
+      font-size: 15px;
+      color: var(--color-text);
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--color-gold);
+      box-shadow: 0 0 0 3px rgba(212, 184, 150, 0.1);
+    }
+
+    .form-input::placeholder,
+    .form-textarea::placeholder {
+      color: #5a5a5a;
+    }
+
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 20px center;
+      cursor: pointer;
+    }
+
+    .form-select option {
+      background: #1a1a1a;
+      color: var(--color-text);
+    }
+
+    .form-textarea {
+      resize: none;
+      min-height: 140px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #d0d0d0;
+      padding: 8px 16px;
+      border: 1px solid var(--color-border-light);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .radio-item:hover {
+      border-color: var(--color-border);
+    }
+
+    .radio-item.active {
+      border-color: var(--color-gold);
+      background: rgba(212, 184, 150, 0.05);
+    }
+
+    .radio-item input {
+      appearance: none;
+      width: 16px; height: 16px;
+      border: 1px solid #6a6a6a;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .radio-item input:checked {
+      border-color: var(--color-gold);
+      background: radial-gradient(circle, var(--color-gold) 40%, transparent 40%);
+    }
+
+    .form-privacy {
+      text-align: center;
+      font-size: 12px;
+      color: #909090;
+      line-height: 2;
+      margin: 32px 0;
+    }
+
+    .form-privacy a {
+      color: var(--color-gold);
+      text-decoration: none;
+    }
+
+    .form-privacy a:hover { text-decoration: underline; }
+
+    .form-submit {
+      text-align: center;
+      padding-top: 8px;
+    }
+
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 220px;
+      padding: 20px 64px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--color-gold);
+      background: transparent;
+      border: 1px solid var(--color-gold);
+      border-radius: 8px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s var(--ease-out-expo);
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: var(--color-gold);
+      transition: left 0.4s var(--ease-out-expo);
+      z-index: -1;
+    }
+
+    .btn-submit:hover::before { left: 0; }
+    .btn-submit:hover { color: var(--color-bg); }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-submit:disabled::before { display: none; }
+    .btn-submit:disabled:hover { color: var(--color-gold); }
+
+    .btn-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Success State */
+    .form-success {
+      text-align: center;
+      padding: 64px 48px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border-light);
+      border-radius: 16px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .success-icon {
+      width: 80px; height: 80px;
+      border: 2px solid var(--color-gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 32px;
+      background: rgba(212, 184, 150, 0.1);
+    }
+
+    .success-icon svg {
+      width: 36px; height: 36px;
+      stroke: var(--color-gold);
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    .success-icon svg path {
+      stroke-dasharray: 50;
+      stroke-dashoffset: 50;
+      animation: checkDraw 0.5s ease forwards 0.2s;
+    }
+
+    .success-title {
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: 28px;
+      font-weight: 300;
+      margin-bottom: 16px;
+      color: #ffffff;
+    }
+
+    .success-text {
+      font-size: 15px;
+      color: #b0b0b0;
+    }
+
+    /* Phone Contact */
+    .contact-phone {
+      text-align: center;
+      margin-top: 64px;
+      padding: 48px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border-light);
+      border-radius: 12px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .contact-phone p {
+      font-size: 13px;
+      color: #909090;
+      margin-bottom: 16px;
+    }
+
+    .contact-phone a {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      color: var(--color-gold);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .contact-phone a:hover { color: var(--color-gold-light); }
+
+    .contact-phone .hours {
+      font-size: 12px;
+      color: #707070;
+      margin-top: 12px;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 64px;
+      border-top: 1px solid var(--color-border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      letter-spacing: 0.2em;
+      color: var(--color-gold);
+      text-decoration: none;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 32px;
+    }
+
+    .footer-links a {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: #808080;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover { color: #c0c0c0; }
+
+    .footer-copy {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: #606060;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .quality-grid { grid-template-columns: repeat(2, 1fr) !important; }
+      .works-grid { grid-template-columns: repeat(2, 1fr); }
+      .flow-cards { grid-template-columns: repeat(3, 1fr) !important; }
+    }
+
+    @media (max-width: 1024px) {
+      .section { padding: 80px 32px; }
+      .nav { padding: 20px 24px; }
+      .gift-grid { grid-template-columns: 1fr; gap: 48px; }
+      .works-grid { grid-template-columns: 1fr; }
+      .flow-intro { grid-template-columns: 1fr; gap: 40px; }
+      .flow-cards { grid-template-columns: repeat(2, 1fr) !important; }
+      .contact-form { padding: 32px 24px; }
+
+      .footer {
+        flex-direction: column;
+        gap: 24px;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-link:not(.nav-link-btn) { display: none; }
+      .hero-title { font-size: 32px; }
+      .quality-grid { grid-template-columns: 1fr !important; }
+      .flow-cards { grid-template-columns: 1fr !important; }
+      .form-row { grid-template-columns: 1fr; }
+      .radio-group { flex-direction: column; gap: 12px; }
+    }
+
+    /* ============================================
+       VIDEO MODAL
+       ============================================ */
+    .video-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .video-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .video-modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(8px);
+    }
+
+    .video-modal-content {
+      position: relative;
+      width: 90vw;
+      max-width: 1100px;
+      aspect-ratio: 16/9;
+      z-index: 1;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+      transform: scale(0.92);
+      transition: transform 0.4s var(--ease-out-expo);
+    }
+
+    .video-modal.active .video-modal-content {
+      transform: scale(1);
+    }
+
+    .video-modal-content iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-modal-close {
+      position: absolute;
+      top: -48px;
+      right: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 2;
+      transition: all 0.3s ease;
+    }
+
+    .video-modal-close:hover {
+      border-color: var(--color-gold);
+      background: rgba(212, 184, 150, 0.1);
+    }
+
+    .video-modal-close svg {
+      width: 18px;
+      height: 18px;
+      stroke: #ffffff;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .video-modal-close:hover svg {
+      stroke: var(--color-gold);
+    }
+
+    .video-modal-title {
+      position: absolute;
+      bottom: -48px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: 18px;
+      font-weight: 300;
+      color: #c0c0c0;
+      letter-spacing: 0.05em;
+    }
+
+    /* ============================================
+       DOCUMENT REQUEST SECTION
+       ============================================ */
+    .document-section {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .document-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(212, 184, 150, 0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .document-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .document-text {
+      position: relative;
+    }
+
+    .document-text h2 {
+      margin-bottom: 24px;
+    }
+
+    .document-text > p {
+      font-size: 15px;
+      color: #c0c0c0;
+      line-height: 2;
+      margin-top: 24px;
+    }
+
+    .document-features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .document-feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .document-feature-icon {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: rgba(212, 184, 150, 0.05);
+    }
+
+    .document-feature-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--color-gold);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .document-feature-text {
+      font-size: 14px;
+      color: #b0b0b0;
+      line-height: 1.6;
+      padding-top: 6px;
+    }
+
+    .document-form-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border-light);
+      border-radius: 16px;
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .document-form-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+    }
+
+    .document-form-title {
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: 22px;
+      font-weight: 400;
+      text-align: center;
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+
+    .document-form-subtitle {
+      font-size: 13px;
+      color: #909090;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .document-form-group {
+      margin-bottom: 20px;
+    }
+
+    .document-form-group label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: #b0b0b0;
+      margin-bottom: 10px;
+    }
+
+    .document-form-group label .required {
+      color: var(--color-gold);
+    }
+
+    .document-form-group input {
+      width: 100%;
+      padding: 16px 20px;
+      font-family: 'Syne', 'Noto Sans JP', sans-serif;
+      font-size: 15px;
+      color: var(--color-text);
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .document-form-group input:focus {
+      border-color: var(--color-gold);
+      box-shadow: 0 0 0 3px rgba(212, 184, 150, 0.1);
+    }
+
+    .document-form-group input::placeholder {
+      color: #5a5a5a;
+    }
+
+    .document-form-privacy {
+      font-size: 11px;
+      color: #707070;
+      text-align: center;
+      margin: 20px 0;
+      line-height: 1.8;
+    }
+
+    .document-form-privacy a {
+      color: var(--color-gold);
+      text-decoration: none;
+    }
+
+    .btn-document {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 18px;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      color: var(--color-bg);
+      background: var(--color-gold);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s var(--ease-out-expo);
+    }
+
+    .btn-document:hover {
+      background: var(--color-gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(212, 184, 150, 0.2);
+    }
+
+    .btn-document:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-document svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--color-bg);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .document-success {
+      text-align: center;
+      padding: 32px 0;
+    }
+
+    .document-success-icon {
+      width: 64px;
+      height: 64px;
+      border: 2px solid var(--color-gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      background: rgba(212, 184, 150, 0.1);
+    }
+
+    .document-success-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: var(--color-gold);
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    .document-success-icon svg path {
+      stroke-dasharray: 50;
+      stroke-dashoffset: 50;
+      animation: checkDraw 0.5s ease forwards 0.2s;
+    }
+
+    .document-success h3 {
+      font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+      font-size: 22px;
+      font-weight: 300;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .document-success p {
+      font-size: 14px;
+      color: #a0a0a0;
+      line-height: 1.8;
+    }
+
+    .document-error {
+      background: rgba(220, 80, 80, 0.1);
+      border: 1px solid rgba(220, 80, 80, 0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #e08080;
+      text-align: center;
+    }
+
+    @media (max-width: 1024px) {
+      .document-inner { grid-template-columns: 1fr; gap: 48px; }
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div class="grain"></div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <a href="#" class="nav-logo">THE DAY</a>
+    <div class="nav-links">
+      <a href="#works" class="nav-link">WORKS</a>
+      <a href="#flow" class="nav-link">FLOW</a>
+      <a href="#contact" class="nav-link nav-link-btn">CONTACT</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg">
+      <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1920&q=80" alt="Cinematic background">
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-label">LIFE DOCUMENTARY CINEMA</p>
+      <h1 class="hero-title">人生を、<br>一本の映画に。</h1>
+      <div class="hero-line"></div>
+      <p class="hero-subtitle">語られなかった物語を、映画に。<br>伝えきれなかった想いを、永遠に。</p>
+    </div>
+    <div class="hero-scroll">
+      <span>SCROLL</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- The Gift Section -->
+  <section class="section section-dark">
+    <div class="container">
+      <div class="gift-grid">
+        <div class="gift-text">
+          <p class="section-label">01 ─── CONCEPT</p>
+          <h2 class="section-title">人生を、映画に<br><span style="color: var(--color-gold);">遺す。</span></h2>
+          <p style="margin-top: 32px;">
+            人生とは、その人が生きてきた軌跡であり、
+            圧倒的に美しく、叡智に満ちた"遺産"だと考えます。
+            THE DAYは、そんな人生を振り返るため、
+            後世に継承するためのブランドです。
+          </p>
+          <p>
+            プロフェッショナルチームと共に映画化する。<br>
+            それは、最も感情に響く映像作品を、あなたのために。
+          </p>
+        </div>
+        <div class="gift-image">
+          <img src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=800&q=80" alt="Family legacy">
+          <div class="gift-image-frame"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Works Section -->
+  <section class="section section-dark" id="works">
+    <div class="container-wide">
+      <div class="works-header">
+        <div>
+          <p class="section-label">02 ─── WORKS</p>
+          <h2 class="section-title">Selected Films</h2>
+        </div>
+      </div>
+      <div class="works-grid">
+        <div class="work-card" data-youtube="MgGYJ54OyjM" onclick="openVideoModal(this)">
+          <img src="https://ffatum.com/wp-content/uploads/2025/09/PXB-井上尚弥-behind-the-match-1024x576.png" alt="井上尚弥">
+          <div class="work-info">
+            <div class="work-meta">
+              <span class="work-year">2024</span>
+              <span class="work-meta-line"></span>
+              <span class="work-category">Documentary</span>
+            </div>
+            <h3 class="work-title">井上尚弥 Behind the match</h3>
+            <p class="work-subtitle">PXB WORLD SPIRITS</p>
+            <p class="work-desc">日本を代表するプロボクサー井上尚弥の試合に密着</p>
+          </div>
+          <div class="work-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        </div>
+        <div class="work-card" data-youtube="vagnG5syG-I" onclick="openVideoModal(this)">
+          <img src="https://ffatum.com/wp-content/uploads/2025/09/旅色サムネ_-1024x576.png" alt="藤原紀香">
+          <div class="work-info">
+            <div class="work-meta">
+              <span class="work-year">2025</span>
+              <span class="work-meta-line"></span>
+              <span class="work-category">Documentary</span>
+            </div>
+            <h3 class="work-title">藤原紀香｜海と醤油が香る町</h3>
+            <p class="work-subtitle">旅色 × 和歌山県湯浅町</p>
+            <p class="work-desc">電子雑誌「月刊旅色」の動画コンテンツ</p>
+          </div>
+          <div class="work-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        </div>
+        <div class="work-card" data-youtube="K9OVLq8fmTw" onclick="openVideoModal(this)">
+          <img src="https://ffatum.com/wp-content/uploads/2025/09/torico-サムネ-1-1024x549.png" alt="岩田剛典">
+          <div class="work-info">
+            <div class="work-meta">
+              <span class="work-year">2025</span>
+              <span class="work-meta-line"></span>
+              <span class="work-category">MV</span>
+            </div>
+            <h3 class="work-title">岩田剛典「TORICO」</h3>
+            <p class="work-subtitle">Concept Movie Hawaii ver.</p>
+            <p class="work-desc">ソロ曲「TORICO」2025 Concept Movie</p>
+          </div>
+          <div class="work-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        </div>
+        <div class="work-card" data-youtube="RFwQHSHE8zc" onclick="openVideoModal(this)">
+          <img src="https://ffatum.com/wp-content/uploads/2025/09/JTB×秦基博_1-1024x576.png" alt="秦基博">
+          <div class="work-info">
+            <div class="work-meta">
+              <span class="work-year">2023</span>
+              <span class="work-meta-line"></span>
+              <span class="work-category">MV / CM</span>
+            </div>
+            <h3 class="work-title">秦基博「Paint Like a Child」</h3>
+            <p class="work-subtitle">JTB Collaboration Movie</p>
+            <p class="work-desc">シンガーソングライター秦基博さんとのコラボレーション</p>
+          </div>
+          <div class="work-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        </div>
+        <div class="work-card" onclick="window.open('https://ffatum.com/works/%e7%9a%84%e5%a0%b4%e6%b5%a9%e5%8f%b8%e3%81%95%e3%82%93%e9%9d%96%e5%9b%bd%e7%a5%9e%e7%a4%be%e7%b5%82%e6%88%a680%e5%b9%b4/','_blank')">
+          <img src="https://ffatum.com/wp-content/uploads/2025/09/的場浩司さん-1024x574.png" alt="的場浩司 靖国神社">
+          <div class="work-info">
+            <div class="work-meta">
+              <span class="work-year">2025</span>
+              <span class="work-meta-line"></span>
+              <span class="work-category">CM / Documentary</span>
+            </div>
+            <h3 class="work-title">的場浩司 靖国神社 終戦80年</h3>
+            <p class="work-subtitle">神社庁</p>
+            <p class="work-desc">俳優・的場浩司氏が靖国神社を参拝し、先人への感謝を語るドキュメンタリー</p>
+          </div>
+          <div class="work-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        </div>
+        <div class="work-card" onclick="window.open('https://ffatum.com/works/2024%e3%82%b7%e3%83%b3%e3%82%ac%e3%83%9d%e3%83%bc%e3%83%ab_%e5%ae%b6%e6%97%8f%e7%af%87_15%e7%a7%92/','_blank')">
+          <img src="https://ffatum.com/wp-content/uploads/2025/06/2024シンガポール_家族篇_15秒_サムネ-1024x576.png" alt="JTB シンガポール">
+          <div class="work-info">
+            <div class="work-meta">
+              <span class="work-year">2024</span>
+              <span class="work-meta-line"></span>
+              <span class="work-category">CM</span>
+            </div>
+            <h3 class="work-title">JTB シンガポール 家族篇</h3>
+            <p class="work-subtitle">JTB TVCM</p>
+            <p class="work-desc">JTBの海外旅行促進TVCM シンガポール家族篇</p>
+          </div>
+          <div class="work-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+        </div>
+      </div>
+      <div class="works-more">
+        <a href="https://ffatum.com/works/" target="_blank" rel="noopener noreferrer">
+          VIEW ALL WORKS
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quality Section (03) -->
+  <section class="section section-light">
+    <div class="container">
+      <div class="quality-header">
+        <p class="section-label">03 ─── QUALITY & PROMISE</p>
+        <h2 class="section-title">妥協なき、映画品質。</h2>
+        <p>私たちは「思い出ビデオ」ではなく、「映画」をつくります。<br>プロフェッショナルチームと共に、あなたのご家族だけのために。</p>
+      </div>
+
+      <!-- Quality Cards with Icons -->
+      <div class="quality-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="quality-card">
+          <div class="quality-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+          </div>
+          <p class="quality-card-label">CREATIVE TEAM</p>
+          <h3 class="quality-card-title">クリエイティブチーム</h3>
+          <p class="quality-card-desc">テレビ業界での豊富な経験を持ち、海外での映像制作プロジェクトを多数手がけてきたプロフェッショナル集団</p>
+        </div>
+        <div class="quality-card">
+          <div class="quality-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><circle cx="18" cy="9" r="1"/></svg>
+          </div>
+          <p class="quality-card-label">PHOTOGRAPH</p>
+          <h3 class="quality-card-title">映画クオリティの撮影</h3>
+          <p class="quality-card-desc">機材・カメラマン・構成など、全て映画クオリティで制作。再現VTRが必要な場合はモデルもキャスティング可能</p>
+        </div>
+        <div class="quality-card">
+          <div class="quality-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 14c2.2 0 4-1.8 4-4V6c0-2.2-1.8-4-4-4S8 3.8 8 6v4c0 2.2 1.8 4 4 4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 18v4M8 22h8"/></svg>
+          </div>
+          <p class="quality-card-label">PLANNER</p>
+          <h3 class="quality-card-title">専任プランナー</h3>
+          <p class="quality-card-desc">ウェディングプランナーのようなイメージで、お客様のご要望をしっかりと汲み取ってクリエイティブに反映</p>
+        </div>
+      </div>
+
+      <!-- Client Logos -->
+      <div style="margin-top: 80px; text-align: center;">
+        <p style="font-size: 11px; letter-spacing: 0.3em; color: var(--color-gold); margin-bottom: 32px;">MAJOR CLIENTS</p>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 48px; flex-wrap: wrap; opacity: 0.7;">
+          <span style="font-family: 'Noto Sans JP', sans-serif; font-size: 16px; color: #c0c0c0; letter-spacing: 0.1em;">三井不動産</span>
+          <span style="font-family: 'Noto Sans JP', sans-serif; font-size: 16px; color: #c0c0c0; letter-spacing: 0.1em;">JTB</span>
+          <span style="font-family: 'Noto Sans JP', sans-serif; font-size: 16px; color: #c0c0c0; letter-spacing: 0.1em;">神社本庁</span>
+          <span style="font-family: 'Noto Sans JP', sans-serif; font-size: 16px; color: #c0c0c0; letter-spacing: 0.1em;">日東リバティ</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Flow Section (04) -->
+  <section class="section section-dark" id="flow">
+    <div class="container">
+      <!-- Flow Intro with Image -->
+      <div class="flow-intro">
+        <div class="flow-intro-text">
+          <p class="section-label">04 ─── FLOW</p>
+          <h2 class="section-title">ご利用の流れ</h2>
+          <p>完全オーダーメイドでの対応が可能です。<br>以下には、想定される一例としての流れを記載しております。</p>
+        </div>
+        <div class="flow-intro-image">
+          <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80" alt="Film production">
+        </div>
+      </div>
+
+      <!-- Flow Cards -->
+      <div class="flow-cards-wrapper">
+        <div class="flow-cards" style="grid-template-columns: repeat(6, 1fr);">
+          <div class="flow-card">
+            <div class="flow-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <p class="flow-card-num">STEP 01</p>
+            <h3 class="flow-card-title">お問い合わせ</h3>
+            <p class="flow-card-desc">HPよりお申し込みください。担当者よりご連絡いたします。</p>
+          </div>
+          <div class="flow-card">
+            <div class="flow-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 14c2.2 0 4-1.8 4-4V6c0-2.2-1.8-4-4-4S8 3.8 8 6v4c0 2.2 1.8 4 4 4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 18v4M8 22h8"/></svg>
+            </div>
+            <p class="flow-card-num">STEP 02</p>
+            <h3 class="flow-card-title">面談 / ヒアリング</h3>
+            <p class="flow-card-desc">専属のプランナーが、お客様の本音まで汲み取ることを目指します。</p>
+          </div>
+          <div class="flow-card">
+            <div class="flow-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <p class="flow-card-num">STEP 03</p>
+            <h3 class="flow-card-title">企画とお見積り</h3>
+            <p class="flow-card-desc">面談内容を踏まえて、企画とお見積もりをご提示します。</p>
+          </div>
+          <div class="flow-card">
+            <div class="flow-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            </div>
+            <p class="flow-card-num">STEP 04</p>
+            <h3 class="flow-card-title">撮影</h3>
+            <p class="flow-card-desc">映画クオリティの機材、クリエイティブチームと共に撮影を行います。</p>
+          </div>
+          <div class="flow-card">
+            <div class="flow-card-icon">
+              <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <p class="flow-card-num">STEP 05</p>
+            <h3 class="flow-card-title">編集</h3>
+            <p class="flow-card-desc">専門のスタッフが映画クオリティで編集を行います。</p>
+          </div>
+          <div class="flow-card">
+            <div class="flow-card-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8M8 11h6"/></svg>
+            </div>
+            <p class="flow-card-num">STEP 06</p>
+            <h3 class="flow-card-title">納品 / 上映</h3>
+            <p class="flow-card-desc">納品のタイミングで、上映会の開催も可能です。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="section section-light" id="contact">
+    <div class="container">
+      <div class="contact-header">
+        <p class="section-label">05 ─── CONTACT</p>
+        <h2 class="section-title">お問い合わせ</h2>
+        <p>ご相談・お見積もりのほか、無料の資料請求も承っております。<br>お気軽にお問い合わせください。</p>
+      </div>
+
+      <!-- 資料請求バナー -->
+      <div style="max-width: 800px; margin: 0 auto 40px; background: linear-gradient(135deg, rgba(212,184,150,0.08) 0%, rgba(212,184,150,0.02) 100%); border: 1px solid rgba(212,184,150,0.2); border-radius: 12px; padding: 28px 32px; display: flex; align-items: center; gap: 24px; cursor: pointer;" onclick="document.querySelector('select[name=subject]').value='document'; document.querySelector('select[name=subject]').dispatchEvent(new Event('change')); document.getElementById('contactForm').scrollIntoView({behavior:'smooth', block:'center'});">
+        <div style="width: 52px; height: 52px; border: 1px solid var(--color-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: rgba(212,184,150,0.08);">
+          <svg viewBox="0 0 24 24" style="width: 22px; height: 22px; stroke: var(--color-gold); fill: none; stroke-width: 1.5;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div style="flex: 1;">
+          <p style="font-size: 15px; color: #ffffff; margin: 0 0 6px; font-weight: 500;">まずは無料で資料を受け取る</p>
+          <p style="font-size: 12px; color: #a0a0a0; margin: 0; line-height: 1.6;">サービス概要・制作実績・料金プランをまとめた提案資料を、メールで即時お届けします。資料請求だけでもお気軽にどうぞ。</p>
+        </div>
+        <div style="flex-shrink: 0; color: var(--color-gold); font-size: 12px; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px;">
+          <span>REQUEST</span>
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="stroke: var(--color-gold);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 12H5m7-7l7 7-7 7"/></svg>
+        </div>
+      </div>
+
+      <div class="form-success hidden" id="formSuccess">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h3 class="success-title" id="successTitle">お問い合わせありがとうございます</h3>
+        <p class="success-text" id="successText">担当者より3営業日以内にご連絡いたします。</p>
+      </div>
+
+      <form class="contact-form" id="contactForm" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">NAME <span class="required">*</span></label>
+            <input type="text" class="form-input" name="name" placeholder="お名前" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">NAME (KANA)</label>
+            <input type="text" class="form-input" name="nameKana" placeholder="フリガナ">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">EMAIL <span class="required">*</span></label>
+            <input type="email" class="form-input" name="email" placeholder="メールアドレス" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">PHONE</label>
+            <input type="tel" class="form-input" name="phone" placeholder="電話番号">
+          </div>
+        </div>
+
+        <div class="form-row-full">
+          <label class="form-label">SUBJECT <span class="required">*</span></label>
+          <select class="form-select" name="subject" required>
+            <option value="">お問い合わせ内容を選択</option>
+            <option value="document">無料資料請求</option>
+            <option value="service">サービスについて詳しく知りたい</option>
+            <option value="quote">見積もりを依頼したい</option>
+            <option value="consultation">まずは相談したい</option>
+            <option value="other">その他</option>
+          </select>
+        </div>
+
+        <!-- 資料請求選択時のみ表示されるインフォボックス -->
+        <div class="form-row-full hidden" id="docRequestInfo" style="background: rgba(212,184,150,0.06); border: 1px solid var(--color-border-light); border-radius: 10px; padding: 20px 24px; margin-bottom: 28px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--color-gold);fill:none;stroke-width:1.5;flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span style="font-size:13px;color:var(--color-gold);letter-spacing:0.1em;">無料資料について</span>
+          </div>
+          <p style="font-size:13px;color:#a0a0a0;line-height:1.8;margin:0;">サービス概要・制作実績・料金プランをまとめた提案資料を、<br>ご入力のメールアドレス宛に自動でお送りいたします。</p>
+        </div>
+
+        <div class="form-row-full">
+          <label class="form-label">PREFERRED TIMELINE</label>
+          <select class="form-select" name="timeline">
+            <option value="">ご希望の時期（任意）</option>
+            <option value="asap">できるだけ早く</option>
+            <option value="3months">3ヶ月以内</option>
+            <option value="6months">半年以内</option>
+            <option value="1year">1年以内</option>
+            <option value="undecided">未定・相談したい</option>
+          </select>
+        </div>
+
+        <div class="form-row-full">
+          <label class="form-label">MESSAGE</label>
+          <textarea class="form-textarea" name="message" placeholder="ご相談内容をお聞かせください（映像を贈りたい方について、特別な記念日など）"></textarea>
+        </div>
+
+        <p class="form-privacy">
+          ご入力いただいた情報は、お問い合わせへの対応にのみ使用いたします。<br>
+          詳しくは<a href="#">プライバシーポリシー</a>をご確認ください。
+        </p>
+
+        <div class="form-submit">
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span id="btnText">SEND MESSAGE</span>
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </section>
+
+  <!-- Video Modal -->
+  <div class="video-modal" id="videoModal">
+    <div class="video-modal-overlay" onclick="closeVideoModal()"></div>
+    <div class="video-modal-content">
+      <button class="video-modal-close" onclick="closeVideoModal()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <iframe id="videoIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      <p class="video-modal-title" id="videoModalTitle"></p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <a href="#" class="footer-logo">THE DAY</a>
+    <div class="footer-links">
+      <a href="https://ffatum.com/" target="_blank" rel="noopener noreferrer">FATUM INC.</a>
+      <a href="#">PRIVACY POLICY</a>
+      <a href="#">COMPANY</a>
+    </div>
+    <p class="footer-copy">© 2026 THE DAY, Inc. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // ============================================
+    // Navigation scroll effect
+    // ============================================
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 100);
+    });
+
+    // ============================================
+    // UNIFIED CONTACT FORM (お問い合わせ + 資料請求)
+    // ============================================
+    // ★★★ 以下のURLを、デプロイしたGASのウェブアプリURLに置き換えてください ★★★
+    const GAS_ENDPOINT = 'YOUR_GAS_WEB_APP_URL_HERE';
+
+    // 「無料資料請求」選択時にインフォボックスを表示
+    const subjectSelect = document.querySelector('select[name="subject"]');
+    const docInfoBox = document.getElementById('docRequestInfo');
+    subjectSelect.addEventListener('change', () => {
+      docInfoBox.classList.toggle('hidden', subjectSelect.value !== 'document');
+    });
+
+    // フォーム送信
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const form = document.getElementById('contactForm');
+      const btn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
+      const success = document.getElementById('formSuccess');
+      const successTitle = document.getElementById('successTitle');
+      const successText = document.getElementById('successText');
+      const formData = new FormData(form);
+      const subject = formData.get('subject');
+      const isDocRequest = subject === 'document';
+
+      btn.disabled = true;
+      btnText.innerHTML = '<span class="btn-spinner"></span>SENDING...';
+
+      // 資料請求の場合はGASにもリクエスト送信
+      if (isDocRequest) {
+        try {
+          await fetch(GAS_ENDPOINT, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              name: formData.get('name'),
+              company: '',
+              email: formData.get('email')
+            })
+          });
+        } catch (error) {
+          console.error('Document request error:', error);
+        }
+      }
+
+      // 送信完了表示
+      setTimeout(() => {
+        form.classList.add('hidden');
+        if (isDocRequest) {
+          successTitle.textContent = '資料をお送りしました';
+          successText.innerHTML = 'ご入力のメールアドレス宛に資料をお送りしました。<br>届かない場合は迷惑メールフォルダをご確認ください。';
+        } else {
+          successTitle.textContent = 'お問い合わせありがとうございます';
+          successText.textContent = '担当者より3営業日以内にご連絡いたします。';
+        }
+        success.classList.remove('hidden');
+        setTimeout(() => {
+          form.reset();
+          form.classList.remove('hidden');
+          success.classList.add('hidden');
+          docInfoBox.classList.add('hidden');
+          btn.disabled = false;
+          btnText.textContent = 'SEND MESSAGE';
+        }, 5000);
+      }, 1500);
+    }
+    function openVideoModal(card) {
+      const youtubeId = card.dataset.youtube;
+      const title = card.querySelector('.work-title').textContent;
+      const modal = document.getElementById('videoModal');
+      const iframe = document.getElementById('videoIframe');
+      const modalTitle = document.getElementById('videoModalTitle');
+
+      iframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+      modalTitle.textContent = title;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeVideoModal() {
+      const modal = document.getElementById('videoModal');
+      const iframe = document.getElementById('videoIframe');
+
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      // iframeのsrcをクリアして動画を停止
+      setTimeout(() => { iframe.src = ''; }, 400);
+    }
+
+    // ESCキーでモーダルを閉じる
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeVideoModal();
+    });
+
+    // ============================================
+    // Smooth scroll
+    // ============================================
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+
+</body>
+</html>
